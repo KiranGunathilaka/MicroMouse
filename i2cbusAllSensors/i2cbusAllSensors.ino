@@ -18,6 +18,67 @@ int a,b,c,d;
 //Magnetometer
 Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
 
+//Motors 
+//left A right B
+const int encoderPinA1 = 18; 
+const int encoderPinA2 = 19;  
+
+const int encoderPinB1 = 16; 
+const int encoderPinB2 = 17;  
+
+const int pwmA = 13;
+
+const int aIn1 = 12;
+const int aIn2 = 14;
+const int bIn1 = 27;
+const int bIn2 = 26;
+
+const int pwmB = 25;
+
+volatile int encoderPos1 = 0;
+volatile int lastEncoded1 = 0;
+volatile int encoderValue1 = 0;
+
+volatile int encoderPos2 = 0;
+volatile int lastEncoded2 = 0;
+volatile int encoderValue2 = 0;
+
+
+
+void readEncoder1() {
+  int MSB = digitalRead(encoderPinA1);
+  int LSB = digitalRead(encoderPinA2);
+
+  int encoded = (MSB << 1) | LSB;
+  int sum = (lastEncoded1 << 2) | encoded;
+
+  if (sum == 0b1101 || sum == 0b0100 || sum == 0b0010 || sum == 0b1011) {
+    encoderPos1++;
+  } else if (sum == 0b1110 || sum == 0b0111 || sum == 0b0001 || sum == 0b1000) {
+    encoderPos1--;
+  }
+
+  lastEncoded1 = encoded;
+
+}
+
+void readEncoder2() {
+  int MSB = digitalRead(encoderPinB1);
+  int LSB = digitalRead(encoderPinB2);
+
+  int encoded = (MSB << 1) | LSB;
+  int sum = (lastEncoded2 << 2) | encoded;
+
+  if (sum == 0b1101 || sum == 0b0100 || sum == 0b0010 || sum == 0b1011) {
+    encoderPos2++;
+  } else if (sum == 0b1110 || sum == 0b0111 || sum == 0b0001 || sum == 0b1000) {
+    encoderPos2--;
+  }
+
+  lastEncoded2 = encoded;
+}
+
+
 void setup() {
   pinMode(20, INPUT_PULLUP);
   pinMode(21, INPUT_PULLUP);
@@ -84,6 +145,31 @@ void setup() {
     /* There was a problem detecting the HMC5883 ... check your connections */
     Serial.println("Ooops, no HMC5883 detected ... Check your wiring!");
   }
+
+  
+
+  pinMode(aIn1, OUTPUT);
+  pinMode(aIn2, OUTPUT);
+  pinMode(encoderPinA1, INPUT);
+  pinMode(encoderPinA2, INPUT);
+
+  attachInterrupt(digitalPinToInterrupt(encoderPinA1), readEncoder1, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(encoderPinA2), readEncoder1, CHANGE);
+
+  ledcAttachChannel(pwmA, 30000, 8, 0);
+  ledcWrite(pwmA, 255);
+  
+
+  pinMode(bIn1, OUTPUT);
+  pinMode(bIn2, OUTPUT);
+  pinMode(encoderPinB1, INPUT);
+  pinMode(encoderPinB2, INPUT);
+
+  attachInterrupt(digitalPinToInterrupt(encoderPinB1), readEncoder2, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(encoderPinB2), readEncoder2, CHANGE);
+
+  ledcAttachChannel(pwmB, 30000, 8, 1);
+  ledcWrite(pwmB, 255); 
 }
 
 void loop() {
@@ -188,6 +274,23 @@ void loop() {
   //   }   
   // }
 
+  Serial.print(encoderPos1);
+  Serial.println("Moving Forward");
+  digitalWrite(aIn1, LOW);
+  digitalWrite(aIn2, HIGH);
+
+  Serial.print(encoderPos2);
+  Serial.println("Moving Forward");
+  digitalWrite(bIn1, LOW);
+  digitalWrite(bIn2, HIGH);
+  delay(1000);
+
+
+  digitalWrite(aIn1, HIGH);
+  digitalWrite(aIn2, LOW);
+
+  digitalWrite(bIn1, HIGH);
+  digitalWrite(bIn2, LOW);
   delay(1000);
 }
 
