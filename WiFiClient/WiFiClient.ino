@@ -1,5 +1,7 @@
 #include <WiFi.h>
 
+//telnet 192.168.8.194 23
+
 const char* ssid = "Hi Wifi";
 const char* password = "Neme9s8i7s";
 

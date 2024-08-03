@@ -3,8 +3,8 @@
 // Create an instance of the sensor
 Adafruit_VL53L0X lox = Adafruit_VL53L0X();
 
-const int SDA_PIN = 6; // Change to your custom SDA pin
-const int SCL_PIN = 5; // Change to your custom SCL pin
+const int SDA_PIN = 5; // Change to your custom SDA pin
+const int SCL_PIN = 6; // Change to your custom SCL pin
 
 const int offset = -20;
 
@@ -32,10 +32,12 @@ void loop() {
   lox.rangingTest(&measure, false); // pass in 'true' to get debug data printout!
 
   if (measure.RangeStatus != 4) {  // phase failures have incorrect data
-    Serial.print("Distance (mm): "); Serial.println(measure.RangeMilliMeter);
+    Serial.print("Distance (mm): "); 
+    Serial.println(measure.RangeMilliMeter);
+    Serial.println(measure.RangeStatus);
   } else {
     Serial.println(" out of range ");
   }
     
-  delay(100);
+  delay(1000);
 }

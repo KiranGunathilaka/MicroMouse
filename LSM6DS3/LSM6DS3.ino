@@ -8,7 +8,7 @@
 #define OUTX_L_XL 0x28 // First accel data register
 
 void setup() {
-  Wire.begin(35,  36) ;  //SDA ,SCL
+  Wire.begin(20,  21) ;  //SDA ,SCL
   Serial.begin(115200);
 
 
@@ -26,7 +26,7 @@ void setup() {
 }
 
 void loop() {
-  float accelX, accelY, accelZ, gyroX, gyroY, gyroZ;
+  float accelX, accelY, accelZ, gyroX, gyroY, gyroZ; 
   
   // Read accelerometer data
   accelX = (float)readWord(OUTX_L_XL) * (4.0/32768.0);
@@ -37,6 +37,7 @@ void loop() {
   gyroX = (float)readWord(OUTX_L_G) * (500.0/32768.0);
   gyroY = (float)readWord(OUTX_L_G + 2) * (500.0/32768.0);
   gyroZ = (float)readWord(OUTX_L_G + 4) * (500.0/32768.0);
+
   
   // Print data
   Serial.print("Accel X: "); Serial.print(accelX);
@@ -46,7 +47,7 @@ void loop() {
   Serial.print(" Y: "); Serial.print(gyroY);
   Serial.print(" Z: "); Serial.println(gyroZ);
   
-  delay(100);
+  delay(1000);
 }
 
 

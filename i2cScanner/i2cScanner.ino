@@ -1,15 +1,21 @@
 #include <Wire.h>
+#include <VL53L0X.h>
+
+VL53L0X sensor1 ,sensor2, sensor3 ;
 
 void setup() {
-  Wire.begin(20, 21);  // SDA on pin 20, SCL on pin 21
-  
+  pinMode(20, INPUT_PULLUP);
+  pinMode(21, INPUT_PULLUP);
+
   Serial.begin(115200);
-  while (!Serial) delay(10);  // Wait for serial console to open
-  
+  Wire.begin(20, 21);  // SDA , SCL
+  Wire.setClock(100000);
+
   Serial.println("\nI2C Scanner");
 }
 
 void loop() {
+
   byte error, address;
   int nDevices;
 
@@ -34,7 +40,7 @@ void loop() {
       if (address < 16) 
         Serial.print("0");
       Serial.println(address, HEX);
-    }    
+    }   
   }
   
   if (nDevices == 0)

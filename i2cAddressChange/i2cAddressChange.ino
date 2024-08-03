@@ -11,25 +11,20 @@ void setup() {
   Wire.begin(20, 21);
 
   Serial.println("VL53L0X test");
-  if (!lox.begin(0x31, &Wire)) {  // 0x29 is the default address
-    Serial.println(F("Failed to boot VL53L0X"));
-    while(1);
-  }else{
-    Serial.println("At i2c add 0x31");
+  if (lox.begin(0x29, &Wire)) {  // 0x29 is the default address
+    Serial.println(F(" boot VL53L0X"));
   }
 
   // Change the I2C address
   if (!lox.setAddress(0x33)) {
     Serial.println(F("Failed to set new address"));
     while(1);
-  }else{
-    Serial.println(F("Address changed to 0x33"));
   }
 
-  
+  Serial.println(F("Address changed to 0x33"));
 
   // Now initialize with the new address
-  if (!lox.begin(0x31, &Wire)) {
+  if (!lox.begin(0x33, &Wire)) {
     Serial.println(F("Failed to boot VL53L0X at new address"));
     while(1);
   }
